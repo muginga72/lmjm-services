@@ -18,7 +18,7 @@ app.get("/api", (req, res) => {
         id: 1,
         title: "Retail trade of beverages",
         description: "Offering a wide variety of drinks and refreshments.",
-        image: "https://example.com/images/beverage.jpg", // assuming public/images/beverage.jpg
+        image: "/images/beverage.jpg", 
       },
       {
         id: 2,
