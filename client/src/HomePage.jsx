@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Container, Navbar, Row, Col, Card } from "react-bootstrap";
+import NavigationBar from "./components/NavigationBar";
+// import Footer from "./components/Footer";
 
 const HomePage = () => {
   const [backendData, setBackendData] = useState(null);
@@ -13,10 +15,10 @@ const HomePage = () => {
 
   return (
     <Container fluid="md" className="px-3">
-      <Navbar bg="light" expand="lg" className="mb-4">
+      {/* <Navbar bg="light" expand="lg" className="mb-4">
         <Navbar.Brand href="#">Your Company</Navbar.Brand>
-      </Navbar>
-
+      </Navbar> */}
+      <NavigationBar />
       {/* Services Section */}
       <Row className="mb-5">
         {!backendData ? (
@@ -44,9 +46,9 @@ const HomePage = () => {
       </Row>
 
       {/* Footer */}
-      <footer className="text-center py-4 border-top">
+      <footer className="bg-light text-center py-4 border-top">
         <small>
-          &copy; {new Date().getFullYear()} Your Company. All rights reserved.
+          &copy; {new Date().getFullYear()} LMJ Services. All rights reserved.
         </small>
       </footer>
     </Container>
