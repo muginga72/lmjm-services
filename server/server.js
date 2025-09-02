@@ -1,14 +1,27 @@
 const express = require("express");
+const path = require("path");
+const cors = require("cors");
+const promoProductRoutes = require("./routes/promoProductRoutes");
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Enable CORS for client requests
+app.use(cors());
+
+// Serve static images from /public/images
+app.use("/images", express.static(path.join(__dirname, "public/images")));
+
 // Serve static files from the "public" directory
-app.use(express.static("public"));
+// app.use(express.static("public"));
 
 // Optional: serve something at root
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
+
+// Mount API routes
+app.use("/api/products", promoProductRoutes);
 
 // Actual data endpoint
 app.get("/api", (req, res) => {
@@ -52,6 +65,11 @@ app.get("/api", (req, res) => {
       },
     ],
   });
+});
+
+// Fallback for unknown routes
+app.use((req, res) => {
+  res.status(404).json({ message: "Not Found" });
 });
 
 app.listen(PORT, () => {
