@@ -1,9 +1,15 @@
 const express = require("express");
+const path = require("path");
+const cors = require("cors");
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Serve static files from the "public" directory
-app.use(express.static("public"));
+// Enable CORS for client requests
+app.use(cors());
+
+// Serve static files from 'public' directory
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Optional: serve something at root
 app.get("/", (req, res) => {
@@ -16,42 +22,47 @@ app.get("/api", (req, res) => {
     services: [
       {
         id: 1,
-        title: "Retail trade of beverages",
+        title: "🍹 Retail Beverages",
         description: "Offering a wide variety of drinks and refreshments.",
-        image: "/images/beverage.jpg", 
+        image: "/beverage.png", 
       },
       {
         id: 2,
-        title: "Buffet services",
+        title: "🍽️ Buffet services",
         description: "Delicious self-serve meals for events and gatherings.",
-        image: "/images/buffet.jpg",
+        image: "/buffet.png",
       },
       {
         id: 3,
-        title: "Tutoring",
+        title: "📚 Tutoring",
         description: "Personalized academic support for students.",
-        image: "/images/tutoring.jpg",
+        image: "/tutoring.png",
       },
       {
         id: 4,
-        title: "Beauty salon",
+        title: "💇 Beauty salon",
         description: "Hair, skin, and nail treatments to help you shine.",
-        image: "/images/beauty-salon.jpg",
+        image: "/beauty-salon.png",
       },
       {
         id: 5,
-        title: "Wedding Events",
+        title: "💍 Wedding Events",
         description: "Elegant planning and coordination for unforgettable weddings.",
-        image: "/images/wedding.jpg",
+        image: "/wedding.png",
       },
       {
         id: 6,
-        title: "Web Development",
+        title: "🧑‍💻 Web Development",
         description: "Custom websites and web apps tailored to your business.",
-        image: "/images/web-dev.jpg",
+        image: "/web-dev.png",
       },
     ],
   });
+});
+
+// Fallback for unknown routes
+app.use((req, res) => {
+  res.status(404).json({ message: "Not Found" });
 });
 
 app.listen(PORT, () => {
