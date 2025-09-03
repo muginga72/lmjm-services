@@ -1,131 +1,104 @@
-import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Card, Spinner, Alert } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import NavigationBar from "../components/NavigationBar";
+import { fetchServices } from "../services/fetchServices";
+import PaginationServices from "../components/PaginationServices";
 import ServiceCardWithModals from "../components/ServiceCardWithModals";
-import { fetchPromoProducts } from "../services/promoProductService";
+import { paginate } from "../utils/paginate";
+import NavigationBar from "../components/NavigationBar";
 
 const HomePage = () => {
-  const [promoProducts, setPromoProducts] = useState([]);
-  const [backendData, setBackendData] = useState(null);
+  const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3;
   const navigate = useNavigate();
 
   useEffect(() => {
-    const loadData = async () => {
+    const loadServices = async () => {
       try {
-        const [promoData, backendRes] = await Promise.all([
-          fetchPromoProducts(),
-          fetch("/api").then((res) => res.json()),
-        ]);
-        setPromoProducts(promoData);
-        setBackendData(backendRes);
+        const data = await fetchServices();
+        setServices(data);
       } catch (err) {
-        setError("Unable to load data from backend.");
+        setError("Unable to load services.");
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
 
-    loadData();
+    loadServices();
   }, []);
 
-  if (loading) {
-    return (
-      <Container className="mt-5 text-center">
-        <Spinner animation="border" />
-      </Container>
-    );
-  }
-
-  if (error) {
-    return (
-      <Container className="mt-5">
-        <Alert variant="danger">{error}</Alert>
-      </Container>
-    );
-  }
+  const paginatedServices = paginate(services, currentPage, itemsPerPage);
 
   return (
-    <Container fluid="md" className="px-3">
+    <div style={{ padding: "2rem", textAlign: "center" }}>
       <NavigationBar />
-      <div style={{ padding: "2rem", textAlign: "center" }}>
-        <h1>Welcome to LMJ Services</h1>
-        <p>Explore our mission, values, and what makes us different.</p>
+      <h1>Welcome to LMJ Services</h1>
+      <p>Explore our mission, values, and what makes us different.</p>
 
-        <div style={{ marginBottom: "2rem" }}>
-          <button
-            onClick={() => window.open("/who-we-are", "_blank")}
-            style={{
-              marginRight: "1rem",
-              backgroundColor: "lightgray",
-              color: "blue",
-              padding: "0.5rem 1rem",
-              border: "none",
-              borderRadius: "5px",
-            }}
-          >
-            Who We Are
-          </button>
-          <button
-            onClick={() => navigate("/contact")}
-            style={{
-              backgroundColor: "lightgray",
-              color: "blue",
-              padding: "0.5rem 1rem",
-              border: "none",
-              borderRadius: "5px",
-            }}
-          >
-            Contact Us
-          </button>
-        </div>
+      <div style={{ marginBottom: "2rem" }}>
+        <button
+          onClick={() => window.open("/who-we-are", "_blank")}
+          style={{
+            marginRight: "1rem",
+            backgroundColor: "lightgray",
+            color: "blue",
+            padding: "0.5rem 1rem",
+            border: "none",
+            borderRadius: "5px",
+          }}
+        >
+          Who We Are
+        </button>
+        <button
+          onClick={() => navigate("/contact")}
+          style={{
+            backgroundColor: "lightgray",
+            color: "blue",
+            padding: "0.5rem 1rem",
+            border: "none",
+            borderRadius: "5px",
+          }}
+        >
+          Contact Us
+        </button>
       </div>
 
-      {/* Promo Products Section */}
-      <Row xs={1} sm={2} md={3} lg={4} className="g-4">
-        {promoProducts.map((product) => (
-          <Col key={product.id}>
-            <ServiceCardWithModals
-              title={product.name}
-              description={product.description}
-              image={product.image}
-            />
-          </Col>
-        ))}
-      </Row>
-
-      {/* Services Section */}
-      <Row className="mb-5">
-        {backendData?.services?.map((service) => (
-          <Col key={service.id} xs={12} sm={6} md={4} className="mb-4">
-            <Card style={{ maxWidth: "100%", height: "100%" }}>
-              {service.image && (
-                <Card.Img
-                  variant="top"
-                  src={service.image}
-                  alt={service.title}
-                  style={{ objectFit: "cover", height: "200px" }}
+      {loading ? (
+        <p>Loading services...</p>
+      ) : error ? (
+        <p style={{ color: "red" }}>{error}</p>
+      ) : (
+        <>
+          <div className="d-flex flex-wrap justify-content-center">
+            {paginatedServices.map((service) => (
+              <div key={service.id} style={{ width: "350px", margin: "1rem" }}>
+                <ServiceCardWithModals
+                  title={service.title}
+                  description={service.description}
+                  image={`/images/${service.image}`} // Correct path to static image
+                  link={`/services/${service.id}`}
                 />
-              )}
-              <Card.Body>
-                <Card.Title>{service.title}</Card.Title>
-                <Card.Text>{service.description}</Card.Text>
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
-      </Row>
+              </div>
+            ))}
+          </div>
 
-      {/* Footer */}
-      <footer className="bg-light text-center py-4 border-top">
-        <small>
-          &copy; {new Date().getFullYear()} LMJ Services. All rights reserved.
-        </small>
-      </footer>
-    </Container>
+          <PaginationServices
+            totalItems={services.length}
+            itemsPerPage={itemsPerPage}
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+          />
+        </>
+      )}
+      <footer className="text-center py-4 border-top">
+    <small>
+      &copy; {new Date().getFullYear()} Your Company. All rights reserved.
+    </small>
+  </footer>
+    </div>
   );
 };
 
