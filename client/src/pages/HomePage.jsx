@@ -5,6 +5,7 @@ import PaginationServices from "../components/PaginationServices";
 import ServiceCardWithModals from "../components/ServiceCardWithModals";
 import { paginate } from "../utils/paginate";
 import NavigationBar from "../components/NavigationBar";
+import ServicesPromo from "../components/ServicesPromo";
 
 const HomePage = () => {
   const [services, setServices] = useState([]);
@@ -35,6 +36,7 @@ const HomePage = () => {
   return (
     <div style={{ padding: "2rem", textAlign: "center" }}>
       <NavigationBar />
+      <ServicesPromo />
       <h1>Welcome to LMJ Services</h1>
       <p>Explore our mission, values, and what makes us different.</p>
 
