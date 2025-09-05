@@ -4,10 +4,8 @@ import { fetchServices } from "../services/fetchServices";
 import PaginationServices from "../components/PaginationServices";
 import ServiceCardWithModals from "../components/ServiceCardWithModals";
 import { paginate } from "../utils/paginate";
-import NavigationBar from "../components/NavigationBar";
-import ServicesPromo from "../components/ServicesPromo";
 
-const HomePage = () => {
+const Home = () => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -35,8 +33,6 @@ const HomePage = () => {
 
   return (
     <div style={{ padding: "2rem", textAlign: "center" }}>
-      <NavigationBar />
-      <ServicesPromo />
       <h1>Welcome to LMJ Services</h1>
       <p>Explore our mission, values, and what makes us different.</p>
 
@@ -57,6 +53,7 @@ const HomePage = () => {
         <button
           onClick={() => navigate("/contact")}
           style={{
+            marginRight: "1rem",
             backgroundColor: "lightgray",
             color: "blue",
             padding: "0.5rem 1rem",
@@ -80,7 +77,7 @@ const HomePage = () => {
                 <ServiceCardWithModals
                   title={service.title}
                   description={service.description}
-                  image={`/images/${service.image}`} // Correct path to static image
+                  image={`/images/${service.image}`}
                   link={`/services/${service.id}`}
                 />
               </div>
@@ -95,13 +92,14 @@ const HomePage = () => {
           />
         </>
       )}
+
       <footer className="text-center py-4 border-top">
-    <small>
-      &copy; {new Date().getFullYear()} Your Company. All rights reserved.
-    </small>
-  </footer>
+        <small>
+          &copy; {new Date().getFullYear()} LMJM Services. All rights reserved.
+        </small>
+      </footer>
     </div>
   );
 };
 
-export default HomePage;
+export default Home;
