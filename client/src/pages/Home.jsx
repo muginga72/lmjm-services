@@ -6,10 +6,10 @@ import ServiceCardWithModals from "../components/ServiceCardWithModals";
 import { paginate } from "../utils/paginate";
 import NavigationBar from "../components/NavigationBar";
 import ServicesPromo from "../components/ServicesPromo";
-import { Routes, Route } from "react-router-dom";
-import LearnMore from "../components/LearnMore";
+// import { Routes, Route } from "react-router-dom";
+// import LearnMore from "../components/LearnMore";
 
-const HomePage = () => {
+const Home = () => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -97,9 +97,9 @@ const HomePage = () => {
           />
         </>
       )}
-      <Routes>
-      <Route path="learn-more" element={<LearnMore />} />
-    </Routes>
+      {/* <Routes>
+        <Route path="learn-more" element={<LearnMore />} />
+      </Routes> */}
 
       <footer className="text-center py-4 border-top">
         <small>
@@ -110,4 +110,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default Home;
