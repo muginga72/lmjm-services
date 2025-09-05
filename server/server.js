@@ -60,6 +60,10 @@ app.get("/api", (req, res) => {
   });
 });
 
+// Mount testimonials route BEFORE app.listen
+const testimonialsRoute = require('./routes/testimonials');
+app.use('/testimonials', testimonialsRoute);
+
 // Fallback for unknown routes
 app.use((req, res) => {
   res.status(404).json({ message: "Not Found" });
