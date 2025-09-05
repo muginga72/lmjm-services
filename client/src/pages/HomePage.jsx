@@ -6,6 +6,8 @@ import ServiceCardWithModals from "../components/ServiceCardWithModals";
 import { paginate } from "../utils/paginate";
 import NavigationBar from "../components/NavigationBar";
 import ServicesPromo from "../components/ServicesPromo";
+import { Routes, Route } from "react-router-dom";
+import LearnMore from "../components/LearnMore";
 
 const HomePage = () => {
   const [services, setServices] = useState([]);
@@ -95,11 +97,15 @@ const HomePage = () => {
           />
         </>
       )}
+      <Routes>
+      <Route path="learn-more" element={<LearnMore />} />
+    </Routes>
+
       <footer className="text-center py-4 border-top">
-    <small>
-      &copy; {new Date().getFullYear()} Your Company. All rights reserved.
-    </small>
-  </footer>
+        <small>
+          &copy; {new Date().getFullYear()} Your Company. All rights reserved.
+        </small>
+      </footer>
     </div>
   );
 };
