@@ -1,9 +1,10 @@
-const Footer = () => {
-  <footer className="text-center py-4 border-top">
-    <small>
-      &copy; {new Date().getFullYear()} Your Company. All rights reserved.
-    </small>
-  </footer>;
-};
+// src/components/Footer.jsx
+import React from "react";
+
+const Footer = () => (
+  <footer className="text-center py-4 bg-light border-top">
+    <p>&copy; {new Date().getFullYear()} LMJM Services. All rights reserved.</p>
+  </footer>
+);
 
 export default Footer;

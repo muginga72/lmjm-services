@@ -1,7 +1,7 @@
 // components/LearnMore.jsx
 
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const LearnMore = () => {
   const [data, setData] = useState(null);
@@ -10,10 +10,10 @@ const LearnMore = () => {
   useEffect(() => {
     const fetchLearnMoreData = async () => {
       try {
-        const response = await axios.get('/api/testimonials');
+        const response = await axios.get("/api/testimonials");
         setData(response.data);
       } catch (err) {
-        console.error('Error fetching LearnMore data:', err);
+        console.error("Error fetching LearnMore data:", err);
       } finally {
         setLoading(false);
       }
@@ -34,19 +34,19 @@ const LearnMore = () => {
     scalability,
     callToAction,
     wedding,
-    tutoringChemistry
+    tutoringChemistry,
   } = data;
 
   return (
-    <div className="learn-more">
-      <h1>{overview.title}</h1>
+    <div className="learn-more container text-center">
+      <h1 style={{ marginTop: "30px" }}>{overview.title}</h1>
       <p>{overview.content}</p>
 
       <h2>{howItWorks.title}</h2>
       <p>{howItWorks.content}</p>
 
       <h2>{benefitsValues.title}</h2>
-      <ul>
+      <ul className="list-unstyled">
         {benefitsValues.content.map((b, i) => (
           <li key={i}>{b}</li>
         ))}
@@ -90,6 +90,12 @@ const LearnMore = () => {
       ) : (
         <p>No tutoring testimonials available.</p>
       )}
+
+      <footer className="text-center py-4 border-top">
+        <small>
+          &copy; {new Date().getFullYear()} LMJM Services. All rights reserved.
+        </small>
+      </footer>
     </div>
   );
 };
