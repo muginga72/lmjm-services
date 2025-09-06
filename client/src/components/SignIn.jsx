@@ -18,7 +18,6 @@ export default function SignIn() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2>Sign In</h2>
       <input
         type="email"
         placeholder="Email"

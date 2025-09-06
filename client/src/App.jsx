@@ -1,6 +1,5 @@
 import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
-import useAuth from "./hooks/useAuth";
 
 import NavigationBar from "./components/NavigationBar";
 import ServicesPromo from "./components/ServicesPromo";
@@ -20,14 +19,8 @@ import SignIn from "./components/SignIn";
 import SignOut from "./components/SignOut";
 
 function App() {
-  const { user } = useAuth();
-
   return (
     <AuthProvider>
-      <h1>Welcome {user ? user.name : "Guest"}</h1>
-
-      <SignIn />
-      <SignOut />
       <NavigationBar />
       <ServicesPromo />
       <Routes>
@@ -49,6 +42,10 @@ function App() {
         <Route path="/services/tutoring" element={<TutoringServices />} />
         <Route path="/services/buffet" element={<BuffetServices />} />
         <Route path="/services/beauty" element={<BeautyServices />} />
+      
+      {/* Auth Pages */}
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signout" element={<SignOut />} />
       </Routes>
     </AuthProvider>
   );
