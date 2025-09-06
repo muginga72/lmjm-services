@@ -1,9 +1,15 @@
 const express = require("express");
 const path = require("path");
 const cors = require("cors");
+const mongoose = require("mongoose");
+require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Set EJS as the view engine
+app.set('view engine', 'ejs');
+app.set('views', './views');
 
 // Enable CORS for client requests
 app.use(cors());
@@ -59,6 +65,21 @@ app.get("/api", (req, res) => {
     ],
   });
 });
+
+// Example middleware to simulate a logged-in user
+app.use((req, res, next) => {
+  // Change this to null to test "Guest"
+  req.user = { name: 'Eli' };
+  next();
+});
+
+// Routes
+app.get('/', (req, res) => {
+  res.render('index', { user: req.user });
+});
+
+const authRoutes = require('./routes/authRoutes');
+app.use('/api/auth', authRoutes);
 
 // Mount testimonials route BEFORE app.listen
 const testimonialsRoute = require('./routes/testimonials');
