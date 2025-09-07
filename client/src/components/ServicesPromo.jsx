@@ -35,7 +35,7 @@ const ServicesPromo = () => {
 
   return (
     <div>
-      <Container fluid className="bg-light py-5 px-4 shadow-sm">
+      <Container fluid className="bg-light px-5 shadow-sm">
         <Row className="align-items-center">
           <Col md={4} className="text-center text-md-start mb-4 mb-md-0">
             <h2 className="fw-bold text-danger">Buy for Half Price</h2>
@@ -57,7 +57,7 @@ const ServicesPromo = () => {
             <Carousel className="w-75 text-center">
               {products.map((product, index) => (
                 <Carousel.Item key={index}>
-                  <div className="d-flex flex-column align-items-center">
+                  <div className="d-flex flex-column align-items-center mb-4">
                     <Image
                       src={product.image}
                       alt={product.name}
