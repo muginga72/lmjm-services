@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Welcome</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center; /* horizontal centering */
+      align-items: center;     /* vertical centering */
+      font-family: sans-serif;
+      background-color: #b0c2e0;
+    }
+    .container {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Hello <%= user ? user.name : 'Guest' %> 👋</h1>
+    <p>Welcome to LMJM Services.</p>
+  </div>
+</body>
+</html>

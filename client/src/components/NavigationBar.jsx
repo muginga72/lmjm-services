@@ -35,7 +35,7 @@ const NavigationBar = () => {
       <Navbar bg="light" expand="lg">
         <Container>
           <LinkContainer to="/">
-            <Navbar.Brand className="d-flex align-items-center gap-2">
+            <Navbar.Brand className="d-flex align-items-center gap-2 mt-3">
               <img
                 src={logo}
                 alt="LMJ Logo"
@@ -54,7 +54,6 @@ const NavigationBar = () => {
               <Nav.Link
                 onClick={handleAuthClick}
                 style={{
-                  marginRight: "15px",
                   fontWeight: "500",
                   cursor: "pointer",
                   color: token ? "#dc3545" : "#007bff",

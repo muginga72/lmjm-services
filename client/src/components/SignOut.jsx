@@ -1,7 +1,31 @@
-// export default SignOut;
+// // export default SignOut;
+
+// import React from 'react';
+// import useAuth from '../hooks/useAuth'; // ✅ default import
+
+// export default function SignOut() {
+//   const { signOut, user } = useAuth();
+
+//   const handleSignOut = async () => {
+//     try {
+//       await signOut();
+//       console.log('Signed out successfully');
+//     } catch (err) {
+//       console.error('Sign out failed:', err);
+//     }
+//   };
+
+//   return (
+//     <div>
+//       <h2>Sign Out</h2>
+//       {user && <p>Signed in as {user.name}</p>}
+//       <button onClick={handleSignOut}>Sign Out</button>
+//     </div>
+//   );
+// }
 
 import React from 'react';
-import useAuth from '../hooks/useAuth'; // ✅ default import
+import useAuth from '../hooks/useAuth';
 
 export default function SignOut() {
   const { signOut, user } = useAuth();
@@ -9,7 +33,6 @@ export default function SignOut() {
   const handleSignOut = async () => {
     try {
       await signOut();
-      console.log('Signed out successfully');
     } catch (err) {
       console.error('Sign out failed:', err);
     }
@@ -18,7 +41,7 @@ export default function SignOut() {
   return (
     <div>
       <h2>Sign Out</h2>
-      {user && <p>Signed in as {user.name}</p>}
+      {user && <p>Signed in as {user.email}</p>}
       <button onClick={handleSignOut}>Sign Out</button>
     </div>
   );
