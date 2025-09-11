@@ -1,26 +1,25 @@
+import React, { useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext";
-
+import { UserContext } from './context/UserContext';
 import NavigationBar from "./components/NavigationBar";
 import ServicesPromo from "./components/ServicesPromo";
 import Home from "./pages/Home";
-import LearnMore from "./pages/LearnMore";
 import WhoWeAre from "./pages/WhoWeAre";
 import Contact from "./pages/Contact";
-
-import WeddingEventServices from "./pages/services/WeddingEventServices";
+import LearnMore from "./pages/LearnMore";
 import WebDevelopmentServices from "./pages/services/WebDevelopmentServices";
-import BeverageServices from "./pages/services/BeverageServices";
+import WeddingEventServices from "./pages/services/WeddingEventServices";
 import TutoringServices from "./pages/services/TutoringServices";
 import BuffetServices from "./pages/services/BuffetServices";
+import BeverageServices from "./pages/services/BeverageServices";
 import BeautyServices from "./pages/services/BeautyServices";
 
-import SignIn from "./components/SignIn";
-import SignOut from "./components/SignOut";
-
 function App() {
+  const [user, setUser] = useState(null);
+
   return (
-    <AuthProvider>
+    <UserContext.Provider value={{ user, setUser }}>
       <NavigationBar />
       <ServicesPromo />
       <Routes>
@@ -29,11 +28,12 @@ function App() {
         <Route path="/who-we-are" element={<WhoWeAre />} />
         <Route path="/contact" element={<Contact />} />
 
-        {/* Services */}
+        {/* Route for the services available */}
         <Route
           path="/services/wedding-events"
           element={<WeddingEventServices />}
         />
+
         <Route
           path="/services/web-development"
           element={<WebDevelopmentServices />}
@@ -42,12 +42,8 @@ function App() {
         <Route path="/services/tutoring" element={<TutoringServices />} />
         <Route path="/services/buffet" element={<BuffetServices />} />
         <Route path="/services/beauty" element={<BeautyServices />} />
-      
-      {/* Auth Pages */}
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/signout" element={<SignOut />} />
       </Routes>
-    </AuthProvider>
+    </UserContext.Provider>
   );
 }
 

@@ -1,4 +1,5 @@
-import { useState } from "react";
+// src/components/NavigationBar.js
+import React, { useContext, useState } from 'react';
 import {
   Navbar,
   Nav,
@@ -6,28 +7,73 @@ import {
   NavDropdown,
   Modal,
   Button,
-} from "react-bootstrap";
-import { LinkContainer } from "react-router-bootstrap";
-import useAuth from "../hooks/useAuth";
-import logo from "../assets/logo.png";
-import SignIn from "../components/SignIn";
+  Form
+} from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
+import logo from '../assets/logo.png';
+import axios from 'axios';
+import { UserContext } from '../context/UserContext';
 
 const NavigationBar = () => {
-  const { token, logout, user } = useAuth();
-  const [showSignIn, setShowSignIn] = useState(false);
-  const [showSignOut, setShowSignOut] = useState(false);
+  const { user, setUser } = useContext(UserContext);
 
-  const handleAuthClick = () => {
-    if (token) {
-      setShowSignOut(true);
-    } else {
-      setShowSignIn(true);
+  // modal visibility
+  const [showLogin, setShowLogin] = useState(false);
+  const [showSignup, setShowSignup] = useState(false);
+
+  // shared form state
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  // Open modals (resetting state)
+  const openLogin = () => {
+    setError('');
+    setEmail('');
+    setPassword('');
+    setShowLogin(true);
+  };
+  const openSignup = () => {
+    setError('');
+    setEmail('');
+    setPassword('');
+    setShowSignup(true);
+  };
+
+  // Handlers
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await axios.post('/api/auth/login', { email, password });
+      // assume { user: {...}, token: '…' }
+      localStorage.setItem('token', data.token);
+      setUser(data.user);
+      setShowLogin(false);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Login failed');
     }
   };
 
-  const handleLogoutConfirm = () => {
-    logout();
-    setShowSignOut(false);
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await axios.post('/api/auth/register', { email, password });
+      localStorage.setItem('token', data.token);
+      setUser(data.user);
+      setShowSignup(false);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Signup failed');
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await axios.get('/api/auth/logout');
+    } catch (_) {
+      // swallow
+    }
+    localStorage.removeItem('token');
+    setUser(null);
   };
 
   return (
@@ -35,33 +81,20 @@ const NavigationBar = () => {
       <Navbar bg="light" expand="lg">
         <Container>
           <LinkContainer to="/">
-            <Navbar.Brand className="d-flex align-items-center gap-2 mt-3">
+            <Navbar.Brand className="d-flex align-items-center">
               <img
                 src={logo}
-                alt="LMJ Logo"
-                width="80"
-                height="80"
-                className="rounded-circle"
+                alt="Logo"
+                width="50"
+                height="50"
+                className="me-2"
               />
               LMJ Services
             </Navbar.Brand>
           </LinkContainer>
-
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ms-auto">
-              {/* Auth Link */}
-              <Nav.Link
-                onClick={handleAuthClick}
-                style={{
-                  fontWeight: "500",
-                  cursor: "pointer",
-                  color: token ? "#dc3545" : "#007bff",
-                }}
-              >
-                {token ? `Sign Out (${user?.name || "User"})` : "Sign In"}
-              </Nav.Link>
-
+          <Navbar.Toggle aria-controls="navbar-nav" />
+          <Navbar.Collapse id="navbar-nav">
+            <Nav className="me-auto">
               <LinkContainer to="/">
                 <Nav.Link>Home</Nav.Link>
               </LinkContainer>
@@ -71,7 +104,7 @@ const NavigationBar = () => {
                   <NavDropdown.Item>Web Development</NavDropdown.Item>
                 </LinkContainer>
                 <LinkContainer to="/services/wedding-events">
-                  <NavDropdown.Item>Wedding</NavDropdown.Item>
+                  <NavDropdown.Item>Wedding Events</NavDropdown.Item>
                 </LinkContainer>
                 <LinkContainer to="/services/tutoring">
                   <NavDropdown.Item>Tutoring</NavDropdown.Item>
@@ -83,58 +116,101 @@ const NavigationBar = () => {
                   <NavDropdown.Item>Beverages</NavDropdown.Item>
                 </LinkContainer>
                 <LinkContainer to="/services/beauty">
-                  <NavDropdown.Item>Beauty</NavDropdown.Item>
+                  <NavDropdown.Item>Beauty Salon</NavDropdown.Item>
                 </LinkContainer>
               </NavDropdown>
+            </Nav>
+
+            <Nav className="ms-auto">
+              {!user && (
+                <>
+                  <Nav.Link onClick={openLogin}>Log In</Nav.Link>
+                  <Nav.Link onClick={openSignup}>Sign Up</Nav.Link>
+                </>
+              )}
+              {user && (
+                <>
+                  <Navbar.Text className="me-3">
+                    Hello, {user.name || user.email}
+                  </Navbar.Text>
+                  <Button variant="outline-secondary" onClick={handleLogout}>
+                    Log Out
+                  </Button>
+                </>
+              )}
             </Nav>
           </Navbar.Collapse>
         </Container>
       </Navbar>
 
-      {/* Sign In Modal */}
-      <Modal
-        className="custom-modal"
-        show={showSignIn}
-        onHide={() => setShowSignIn(false)}
-        centered
-      >
+      {/* Login Modal */}
+      <Modal show={showLogin} onHide={() => setShowLogin(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Sign In</Modal.Title>
+          <Modal.Title>Log In</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <SignIn />
+          {error && <p className="text-danger">{error}</p>}
+          <Form onSubmit={handleLogin}>
+            <Form.Group controlId="loginEmail" className="mb-3">
+              <Form.Label>Email address</Form.Label>
+              <Form.Control
+                type="email"
+                placeholder="Enter email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </Form.Group>
+            <Form.Group controlId="loginPassword" className="mb-3">
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </Form.Group>
+            <Button variant="primary" type="submit">
+              Log In
+            </Button>
+          </Form>
         </Modal.Body>
       </Modal>
 
-      {/* Sign Out Confirmation Modal */}
-      <Modal
-        className="custom-modal"
-        show={showSignOut}
-        onHide={() => setShowSignOut(false)}
-        centered
-      >
+      {/* Signup Modal */}
+      <Modal show={showSignup} onHide={() => setShowSignup(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Confirm Sign Out</Modal.Title>
+          <Modal.Title>Sign Up</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Are you sure you want to sign out?</p>
+          {error && <p className="text-danger">{error}</p>}
+          <Form onSubmit={handleSignup}>
+            <Form.Group controlId="signupEmail" className="mb-3">
+              <Form.Label>Email address</Form.Label>
+              <Form.Control
+                type="email"
+                placeholder="Enter email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </Form.Group>
+            <Form.Group controlId="signupPassword" className="mb-3">
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </Form.Group>
+            <Button variant="primary" type="submit">
+              Sign Up
+            </Button>
+          </Form>
         </Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="secondary"
-            className="custom-btn-secondary"
-            onClick={() => setShowSignOut(false)}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="danger"
-            className="custom-btn-danger"
-            onClick={handleLogoutConfirm}
-          >
-            Sign Out
-          </Button>
-        </Modal.Footer>
       </Modal>
     </>
   );

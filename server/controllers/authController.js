@@ -1,38 +1,57 @@
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const User = require('../models/userModel');
+const asyncHandler = require('express-async-handler');
+const User = require('../models/User');
+const generateToken = require('../utils/generateToken');
 
-exports.signin = async (req, res) => {
-  try {
-    console.log('[SIGNIN] Incoming request:', req.body);
+// @desc    Register new user
+// @route   POST /api/auth/signup
+// @access  Public
+exports.signup = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+  console.log('Signup payload:', req.body);
 
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      console.warn('[SIGNIN] User not found:', email);
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      console.warn('[SIGNIN] Password mismatch for:', email);
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
-
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
-    });
-
-    console.log('[SIGNIN] Auth successful for:', email);
-    res.status(200).json({ token, user: { id: user._id, email: user.email } });
-  } catch (err) {
-    console.error('[SIGNIN] Error:', err.message);
-    res.status(500).json({ message: 'Server error' });
+  const userExists = await User.findOne({ email });
+  if (userExists) {
+    res.status(400);
+    throw new Error('User already exists');
   }
-};
 
-exports.signout = (req, res) => {
-  console.log('[SIGNOUT] User signed out');
-  res.status(200).json({ message: 'Signout successful' });
-};
+  const user = await User.create({ email, password });
+  if (user) {
+    res.status(201).json({
+      _id: user._id,
+      email: user.email,
+      token: generateToken(user._id)
+    });
+  } else {
+    res.status(400);
+    throw new Error('Invalid user data');
+  }
+});
+
+// @desc    Authenticate user & get token
+// @route   POST /api/auth/login
+// @access  Public
+exports.login = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+  console.log('Login payload:', req.body);
+
+  const user = await User.findOne({ email });
+  if (user && (await user.matchPassword(password))) {
+    res.json({
+      _id: user._id,
+      email: user.email,
+      token: generateToken(user._id)
+    });
+  } else {
+    res.status(401);
+    throw new Error('Invalid email or password');
+  }
+});
+
+// @desc    Logout user (client-side token removal)
+// @route   POST /api/auth/logout
+// @access  Private
+exports.logout = asyncHandler(async (req, res) => {
+  // On JWT flows, logout is handled client-side by deleting token
+  res.json({ message: 'Logged out successfully' });
+});
