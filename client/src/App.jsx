@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
+import { UserContext } from './context/UserContext';
 import NavigationBar from "./components/NavigationBar";
 import ServicesPromo from "./components/ServicesPromo";
 import Home from "./pages/Home";
@@ -15,8 +16,10 @@ import BeverageServices from "./pages/services/BeverageServices";
 import BeautyServices from "./pages/services/BeautyServices";
 
 function App() {
+  const [user, setUser] = useState(null);
+
   return (
-    <>
+    <UserContext.Provider value={{ user, setUser }}>
       <NavigationBar />
       <ServicesPromo />
       <Routes>
@@ -35,16 +38,12 @@ function App() {
           path="/services/web-development"
           element={<WebDevelopmentServices />}
         />
-
         <Route path="/services/beverages" element={<BeverageServices />} />
-
         <Route path="/services/tutoring" element={<TutoringServices />} />
-
         <Route path="/services/buffet" element={<BuffetServices />} />
-
         <Route path="/services/beauty" element={<BeautyServices />} />
       </Routes>
-    </>
+    </UserContext.Provider>
   );
 }
 
